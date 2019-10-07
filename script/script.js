@@ -7,17 +7,26 @@ window.addEventListener('DOMContentLoaded', function () {
         body.addEventListener('click', (event) => {
             event.preventDefault();
             let target = event.target;
+
+            // Условие для выбора ссылок, управляющих аккордеоном
+            if (target.closest('a')) {
+                const targetForAcc = target.closest('a');
+                if (targetForAcc.getAttribute('role') == 'button') {
+                    target = targetForAcc;
+                } 
+            }
             
             switch (true) {
                 //Вызов универсального попапа
-                case ((target.className.indexOf('call-btn') != -1) || (target.className.indexOf('check-btn') != -1) || (target.className.indexOf('discount-btn') != -1)):
+                case ((target.className.indexOf('call-btn') != -1) || (target.className.indexOf('check-btn') != -1) || (target.className.indexOf('discount-btn') != -1)||
+                (target.className.indexOf('consultation-btn') != -1)):
                     togglePopup(target);
                     break;
                 //Вызов добавления блоков по кнопке Больше
                 case (target.className.indexOf('add-sentence-btn') != -1):
                     addSentense(target);
                     break;
-                // Следующие 2 кейса - работа с FAQ аккордеоном
+                // Вызов универсального аккордеона - клики по ссылке в заголовке и по панелям заголовка
                 case (target.getAttribute('role') == 'button'):
                     accordeonMoving(target);
                     break;
@@ -37,17 +46,23 @@ window.addEventListener('DOMContentLoaded', function () {
     const togglePopup = (target) => {
         const popupCall = document.querySelector('.popup-call'),
             popupCheck = document.querySelector('.popup-check'),
-            popupDiscount = document.querySelector('.popup-discount');
+            popupDiscount = document.querySelector('.popup-discount'),
+            popupConsultation = document.querySelector('.popup-consultation');
         let popup;
 
-        if (target.className.indexOf('call-btn') != -1) {
-            popup = popupCall;
-        } else if (target.className.indexOf('check-btn') != -1) {
-            popup = popupCheck;
-        } else if (target.className.indexOf('discount-btn') != -1) {
-            popup = popupDiscount;
-        } else {
-            return;
+        switch (true) {
+            case (target.className.indexOf('call-btn') != -1):
+                popup = popupCall;
+                break;
+            case (target.className.indexOf('check-btn') != -1):
+                popup = popupCheck;
+                break;
+            case (target.className.indexOf('discount-btn') != -1):
+                popup = popupDiscount;
+                break;
+            case (target.className.indexOf('consultation-btn') != -1):
+                popup = popupConsultation;
+                break;
         }
 
         setOpacity(popup);
@@ -94,10 +109,11 @@ window.addEventListener('DOMContentLoaded', function () {
         target.style.display = 'none';
     };
 
-    //FAQ Аккордеон
+    //Универсальный аккордеон
     const accordeonMoving = (target) => {
         const panelClass = target.getAttribute('aria-controls'),
-            accordion = document.getElementById('accordion-two'),
+            parentId = target.getAttribute('data-parent'),
+            accordion = document.querySelector(parentId),
             allPanels = accordion.querySelectorAll('.panel-collapse');
         const thisPanel = document.getElementById(panelClass);
 
@@ -109,6 +125,11 @@ window.addEventListener('DOMContentLoaded', function () {
         
         thisPanel.classList.toggle('in');        
         
+    };
+
+    //Аккордеон-калькулятор
+    const accordeonCalc = (target) => {
+
     };
 
 });

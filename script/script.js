@@ -127,7 +127,6 @@ window.addEventListener('DOMContentLoaded', function () {
             allLinks = accordion.querySelectorAll('a'),
             total = document.getElementById('calc-result');
         let totalMultiplier = {val: 1},
-            totalSum = {val: 0},
             bottom = {val: 0},
             base = {val: 0};
         
@@ -171,37 +170,37 @@ window.addEventListener('DOMContentLoaded', function () {
             event.preventDefault();
             let target = event.target;
 
-        //Управление панелями с помощью заголовков
-        if (target.closest('a')) {
-            target = target.closest('a');
-        }
-        if (target.getAttribute('role') == 'button') {
-            switcher();
-            accordeonMoving(target);
-        }
+            //Управление панелями с помощью заголовков
+            if (target.closest('a')) {
+                target = target.closest('a');
+            }
+            if (target.getAttribute('role') == 'button') {
+                switcher();
+                accordeonMoving(target);
+            }
 
-        //Управление панелями с помощью кнопки Следующий шаг
-        switch(true) {
-            case (target.getAttribute('href') == '#collapseTwo'):
-                accordeonMoving(allLinks[2]);
-                switcher();
-                break;
-            case (target.getAttribute('href') == '#collapseThree'):
-                accordeonMoving(allLinks[4]);
-                switcher();
-                break;
-            case (target.getAttribute('href') == '#collapseFour'):
-                accordeonMoving(allLinks[6]);
-                switcher();
-                break;
-        }
+            //Управление панелями с помощью кнопки Следующий шаг
+            switch(true) {
+                case (target.getAttribute('href') == '#collapseTwo'):
+                    accordeonMoving(allLinks[2]);
+                    switcher();
+                    break;
+                case (target.getAttribute('href') == '#collapseThree'):
+                    accordeonMoving(allLinks[4]);
+                    switcher();
+                    break;
+                case (target.getAttribute('href') == '#collapseFour'):
+                    accordeonMoving(allLinks[6]);
+                    switcher();
+                    break;
+            }
 
-        //Вызов управления переключателями
-        if ((target.className.indexOf('onoffswitch-inner') != -1)||(target.className.indexOf('onoffswitch-switch') != -1)) {
-            switchMoving(target);
-            switcher();
-            
-        } 
+            //Вызов управления переключателями
+            if ((target.className.indexOf('onoffswitch-inner') != -1)||(target.className.indexOf('onoffswitch-switch') != -1)) {
+                switchMoving(target);
+                switcher();
+                
+            } 
         });
 
         //Вычисление множителя диаметров колец и общей суммы
@@ -219,7 +218,7 @@ window.addEventListener('DOMContentLoaded', function () {
                 multipliers[i] = item.selectedIndex;
                 
             });
-            console.log(allSwitches[0].checked, allSwitches[1].checked);
+
             //Здесь вычисляются параметры суммы
             if (allSwitches[0].checked) {
                 
@@ -243,7 +242,7 @@ window.addEventListener('DOMContentLoaded', function () {
             }
     
             totalMultiplier.val = thisMultiplier;
-            
+            //Вывод суммы в input 'calc-result'
             total.value = Math.ceil((base.val + bottom.val) * totalMultiplier.val);
         
         return;
@@ -258,10 +257,8 @@ window.addEventListener('DOMContentLoaded', function () {
                 
             });
         });
-
-                     
-
     };
+    
     calc();
 
 });

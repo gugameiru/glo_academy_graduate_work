@@ -68,7 +68,8 @@ window.addEventListener('DOMContentLoaded', function () {
                 }
             }
         });
-        
+
+        return;    
     };
 
     // Анимация - плавное изменение прозрачности
@@ -96,6 +97,8 @@ window.addEventListener('DOMContentLoaded', function () {
         });
 
         target.style.display = 'none';
+
+        return;
     };
 
     //Универсальный аккордеон
@@ -145,23 +148,20 @@ window.addEventListener('DOMContentLoaded', function () {
                 titleTextes[1].style.display = 'block';
             }
 
-
             return;
         };
 
         //Управление переключателями
         const switchMoving = (target) => {
             const parentBlock = target.closest('div[role]'),
-                theSwitcher = parentBlock.querySelector('.onoffswitch-checkbox'),
-                theSwitcherName = parentBlock.querySelector('input');
-                console.log(theSwitcherName);
+                theSwitcher = parentBlock.querySelector('.onoffswitch-checkbox');
     
             theSwitcher.toggleAttribute('checked'); 
             switcher();
             allSelects();
-             
-        };
 
+            return;             
+        };
 
         switcher();
 
@@ -209,9 +209,8 @@ window.addEventListener('DOMContentLoaded', function () {
                 realMultipliers = [[1, 1.2],[1, 1.3, 1.5],[1, 1.2],[1, 1.3, 1.5]];
             let thisMultiplier = 1;
 
-            //Здесь вычисляется множитель
-            const localAllSelectors = accordion.querySelectorAll('select');    
-            localAllSelectors.forEach((item,i) => {
+            //Здесь вычисляется множитель  
+            allSelectors.forEach((item,i) => {
                 if (multipliers[i] != item.selectedIndex) {
                     thisMultiplier = thisMultiplier * realMultipliers[i][item.selectedIndex];
                 }

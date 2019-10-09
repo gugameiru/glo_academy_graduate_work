@@ -1,69 +1,35 @@
 window.addEventListener('DOMContentLoaded', function () {
     'use strict';
 
-    //Получение разных кнопок и запуск разных функций
-    const getButtons = () => {
-
-    // Вывод дефолтного значения в калькулятор
-    let total = document.getElementById('calc-result');
-    total.value = 11000;
-
-        //Отключение второго блока селекторов по умолчанию
-        const accordion = document.getElementById('accordion'),
-            selectBoxes = accordion.querySelectorAll('.select-box'),
-            titleTextes = accordion.querySelectorAll('.title-text');
-
-            selectBoxes[2].style.display = 'none';
-            selectBoxes[3].style.display = 'none';
-            titleTextes[1].style.display = 'none';
-
+    // Выбор кнопок для попапа, второго аккордеона и кнопки больше
+    const getPopupButtons = () => {
         const body = document.querySelector('body');
         body.addEventListener('click', (event) => {
             event.preventDefault();
             let target = event.target;
 
-            console.log(target);
-
             // Условие для выбора ссылок, управляющих аккордеонами - заменяем span на а
             if (target.closest('a')) {
                 target = target.closest('a');
             }
-            
-
-            switch (true) {
-                //Вызов универсального попапа
-                case ((target.className.indexOf('call-btn') != -1) || (target.className.indexOf('check-btn') != -1) || (target.className.indexOf('discount-btn') != -1)||
-                (target.className.indexOf('consultation-btn') != -1)):
-                    togglePopup(target);
-                    break;
-                //Вызов добавления блоков по кнопке Больше
-                case (target.className.indexOf('add-sentence-btn') != -1):
-                    addSentense(target);
-                    break;
-                // Вызов универсального аккордеона - клики по ссылке в заголовке и по панелям заголовка
-                case ((target.getAttribute('role') == 'button')):
-                    accordeonMoving(target);
-                    break;
-                case ((target.className.indexOf('panel-heading') != -1)|| (target.className.indexOf('panel-title') != -1)):
-                    target = target.querySelector('a');
-                    accordeonMoving(target);
-                    break;
-                //Вызов управления переключателями
-                case ((target.className.indexOf('onoffswitch-inner') != -1)||(target.className.indexOf('onoffswitch-switch') != -1)): 
-                    switchMoving(target);
-                    break;
-                //Вызов управления кнопками "Следующий шаг"
-                case(target.className.indexOf('construct-btn') != -1):
-                    nextStepButtons(target);
-                    break;
-                             
-                
+            //Вызов универсального попапа
+            if ((target.className.indexOf('call-btn') != -1) || (target.className.indexOf('check-btn') != -1) || (target.className.indexOf('discount-btn') != -1)||
+            (target.className.indexOf('consultation-btn') != -1)) {
+                togglePopup(target);
             }
+            //Вызов добавления блоков по кнопке Больше
+            if (target.className.indexOf('add-sentence-btn') != -1) {
+                addSentense(target);
+            }
+            // Управление аккордеоном 2 
+            if ((target.getAttribute('role') == 'button')  && (target.closest('#accordion-two'))) {
+                accordeonMoving(target);
+            }
+
         });
     };
 
-    getButtons();
-
+    getPopupButtons();
 
     //Универсальный попап
     const togglePopup = (target) => {
@@ -146,97 +112,156 @@ window.addEventListener('DOMContentLoaded', function () {
             }
         });
         
-        thisPanel.classList.toggle('in');        
+        thisPanel.classList.toggle('in');
+        return;        
         
     };
 
     //Калькулятор
-        //Управление переключателями, влияние их положения на сумму
-    const switchMoving = (target) => {
-        const parentBlock = target.closest('div[role]'),
-            switcher = parentBlock.querySelector('.onoffswitch-checkbox'),
-            switchOne = document.getElementById('myonoffswitch'),
-            switchTwo = document.getElementById('myonoffswitch-two'),
-            total = document.getElementById('calc-result');
-
-
-        switcher.toggleAttribute('checked');
-
-        if (switchOne.checked == true) {
-            total.value = 10000;
-            if (switchTwo.checked == true) {
-                total.value = +total.value + 1000;
-            }
-        } else {
-            total.value = 15000;
-            if (switchTwo.checked == true) {
-                total.value = +total.value + 2000;
-            }
-        }
-
-        allSelects();
-    };
-        //Перемещение по кнопкам Следующий блок
-    const nextStepButtons = (target) => {
-        const parentBlock = document.querySelector(target.getAttribute('data-parent')),
-            accordion = document.getElementById('accordion'),
+    const calc = () => {
+        const accordion = document.getElementById('accordion'),
             allSelectors = accordion.querySelectorAll('select'),
-            allSwitches = parentBlock.querySelectorAll('.onoffswitch-checkbox'),
-            selectBoxes = parentBlock.querySelectorAll('.select-box'),
-            titleTextes = parentBlock.querySelectorAll('.title-text'),
-            allLinks = parentBlock.querySelectorAll('a');
+            allSwitches = accordion.querySelectorAll('.onoffswitch-checkbox'),
+            selectBoxes = accordion.querySelectorAll('.select-box'),
+            titleTextes = accordion.querySelectorAll('.title-text'),
+            allLinks = accordion.querySelectorAll('a'),
+            total = document.getElementById('calc-result');
+        let totalMultiplier = {val: 1},
+            totalSum = {val: 0},
+            bottom = {val: 0},
+            base = {val: 0};
+        
+        //включение-выключение второго блока селектов
+        const switcher = () => {
             
-            //Отключение селектов второго колодца
-        if (allSwitches[0].checked) {
-            selectBoxes[2].style.display = 'none';
-            selectBoxes[3].style.display = 'none';
-            titleTextes[1].style.display = 'none';
-            allSelectors[2].selectedIndex = 0;
-            allSelectors[3].selectedIndex = 0;
-        } else {
-            selectBoxes[2].style.display = 'inline-block';
-            selectBoxes[3].style.display = 'inline-block';
-            titleTextes[1].style.display = 'block';
+            if (allSwitches[0].checked) {
+                selectBoxes[2].style.display = 'none';
+                selectBoxes[3].style.display = 'none';
+                titleTextes[1].style.display = 'none';
+                allSelectors[2].selectedIndex = 0;
+                allSelectors[3].selectedIndex = 0;
+            } else {
+                selectBoxes[2].style.display = 'inline-block';
+                selectBoxes[3].style.display = 'inline-block';
+                titleTextes[1].style.display = 'block';
+            }
+
+
+            return;
+        };
+
+        //Управление переключателями
+        const switchMoving = (target) => {
+            const parentBlock = target.closest('div[role]'),
+                theSwitcher = parentBlock.querySelector('.onoffswitch-checkbox'),
+                theSwitcherName = parentBlock.querySelector('input');
+                console.log(theSwitcherName);
+    
+            theSwitcher.toggleAttribute('checked'); 
+            switcher();
+            allSelects();
+             
+        };
+
+
+        switcher();
+
+        //Управление аккордеоном калькулятора
+        accordion.addEventListener('click', (event) => {
+            event.preventDefault();
+            let target = event.target;
+
+        //Управление панелями с помощью заголовков
+        if (target.closest('a')) {
+            target = target.closest('a');
+        }
+        if (target.getAttribute('role') == 'button') {
+            switcher();
+            accordeonMoving(target);
         }
 
-            //Хождение по кнопкам Следующий блок
+        //Управление панелями с помощью кнопки Следующий шаг
         switch(true) {
             case (target.getAttribute('href') == '#collapseTwo'):
                 accordeonMoving(allLinks[2]);
+                switcher();
                 break;
             case (target.getAttribute('href') == '#collapseThree'):
                 accordeonMoving(allLinks[4]);
+                switcher();
                 break;
             case (target.getAttribute('href') == '#collapseFour'):
                 accordeonMoving(allLinks[6]);
+                switcher();
                 break;
         }
-  
-    };
 
-    //Управление селектами диаметра и количества колец, влияние их на сумму
-    const allSelects = () => {
-        const parentBlock = document.getElementById('collapseTwo'),
-            allSelectors = parentBlock.querySelectorAll('select'),
-            total = document.getElementById('calc-result'),
-            totalValue = total.value,
-            multipliers = [],
-            realMultipliers = [[1, 1.2],[1, 1.3, 1.5],[1, 1.2],[1, 1.3, 1.5]];
+        //Вызов управления переключателями
+        if ((target.className.indexOf('onoffswitch-inner') != -1)||(target.className.indexOf('onoffswitch-switch') != -1)) {
+            switchMoving(target);
+            switcher();
+            
+        } 
+        });
 
-        allSelectors.forEach((item,i) => {
-            item.addEventListener('change', () => {
-                total.value = totalValue;
+        //Вычисление множителя диаметров колец и общей суммы
+        const allSelects = () => {
+            const multipliers = [],
+                realMultipliers = [[1, 1.2],[1, 1.3, 1.5],[1, 1.2],[1, 1.3, 1.5]];
+            let thisMultiplier = 1;
+
+            //Здесь вычисляется множитель
+            const localAllSelectors = accordion.querySelectorAll('select');    
+            localAllSelectors.forEach((item,i) => {
                 if (multipliers[i] != item.selectedIndex) {
-                    total.value = +total.value * realMultipliers[i][item.selectedIndex];
+                    thisMultiplier = thisMultiplier * realMultipliers[i][item.selectedIndex];
                 }
                 multipliers[i] = item.selectedIndex;
-                console.log(realMultipliers[i][item.selectedIndex]);
+                
+            });
+            console.log(allSwitches[0].checked, allSwitches[1].checked);
+            //Здесь вычисляются параметры суммы
+            if (allSwitches[0].checked) {
+                
+                base.val = 10000;
+            } 
+
+            if (!allSwitches[0].checked) {
+                base.val = 15000;
+            }
+
+            if ((allSwitches[0].checked)&&(allSwitches[1].checked)) {
+                bottom.val = 1000;
+            }
+
+            if ((!allSwitches[0].checked)&&(allSwitches[1].checked)) {
+                bottom.val = 2000;
+            }
+
+            if (!allSwitches[1].checked) {
+                bottom.val = 0;
+            }
+    
+            totalMultiplier.val = thisMultiplier;
+            
+            total.value = Math.ceil((base.val + bottom.val) * totalMultiplier.val);
+        
+        return;
+        };
+
+        allSelects();
+ 
+        //Вызов вычисления множителя
+        allSelectors.forEach((item,i) => {
+            item.addEventListener('change', () => {
+                allSelects();
+                
             });
         });
-           
-        
-    };
 
-    allSelects();
+                     
+
+    };
+    calc();
 
 });

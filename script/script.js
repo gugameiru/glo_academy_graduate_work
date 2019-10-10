@@ -29,7 +29,7 @@ window.addEventListener('DOMContentLoaded', function () {
             //Вызов отправки данных
             if ((target.type == 'submit') && (target.name == 'submit') && (target.tagName == 'BUTTON') && (target.className.indexOf('director-btn') == -1)) {
                 target = target.closest('form');
-                sendForm(target);
+                sendForm(target);  
             }
 
         }, true);
@@ -321,14 +321,19 @@ window.addEventListener('DOMContentLoaded', function () {
             url = './server.php';
 
         const statusMessage = document.createElement('div');
+        statusMessage.className = 'status';
         statusMessage.style.cssText = 'font-size: 2rem;';   
                 
-        form.appendChild(statusMessage);
+        if (!form.querySelector('.status')) {
+            form.appendChild(statusMessage);
+            statusMessage.textContent = loadMessage;
+            setTimeout(() => {
+                form.removeChild(statusMessage);
+            }, 4000);
+        }
+        
         statusMessage.textContent = loadMessage;
-        setTimeout(() => {
-            form.removeChild(statusMessage);
-        }, 4000);
-
+        
         const formData = new FormData(form);
         let thisBody = {},
         mainBody = JSON.parse(localStorage.getItem("calcData"));

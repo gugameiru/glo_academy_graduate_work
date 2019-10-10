@@ -317,7 +317,10 @@ window.addEventListener('DOMContentLoaded', function () {
         const errorMessage = 'Что-то пошло не так...',
             loadMessage = 'Загрузка...',
             successMessage = 'Спасибо! Ожидайте звонка нашего менеджера',
+            inputErrorMessage = 'Ошибка ввода',
             userQuestion = document.getElementsByName('user_quest'),
+            userName = form.querySelector('input[name="user_name"]'),
+            userPhone = form.querySelector('input[name="user_phone"]'),
             url = './server.php';
 
         const statusMessage = document.createElement('div');
@@ -331,7 +334,17 @@ window.addEventListener('DOMContentLoaded', function () {
                 form.removeChild(statusMessage);
             }, 4000);
         }
-        
+
+        if ((userName) && !(userName.value.match(/[а-яёА-ЯЁ\s]/g)))  {
+            statusMessage.textContent = inputErrorMessage;
+            return;
+        }
+
+        if ((userPhone)&& !(userPhone.value.match(/[0-9]/g))) {
+            statusMessage.textContent = inputErrorMessage;
+            return;
+        }
+                
         statusMessage.textContent = loadMessage;
         
         const formData = new FormData(form);

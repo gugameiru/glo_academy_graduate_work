@@ -277,6 +277,7 @@ window.addEventListener('DOMContentLoaded', function () {
             }
     
             totalMultiplier.val = thisMultiplier;
+
             //Вывод суммы в input 'calc-result'
             total.value = Math.ceil((base.val + bottom.val) * totalMultiplier.val);
             calcData.sum = +total.value;
@@ -285,6 +286,7 @@ window.addEventListener('DOMContentLoaded', function () {
                 calcData.distance = +distance.value;
             }
 
+            //Хранение объекта с данными калькулятора в LocalStorage
             localStorage.setItem("calcData", JSON.stringify(calcData));
 
         
@@ -301,6 +303,7 @@ window.addEventListener('DOMContentLoaded', function () {
             });
         });
 
+        //Добавление расстояния до дома
         distance.addEventListener('change', () => {
             calcData.distance = distance.textContent;
             allSelects();
@@ -326,7 +329,8 @@ window.addEventListener('DOMContentLoaded', function () {
         const statusMessage = document.createElement('div');
         statusMessage.className = 'status';
         statusMessage.style.cssText = 'font-size: 2rem;';   
-                
+         
+        //Создание ТОЛЬКО ОДНОГО поля со статусом
         if (!form.querySelector('.status')) {
             form.appendChild(statusMessage);
             statusMessage.textContent = loadMessage;
@@ -335,6 +339,7 @@ window.addEventListener('DOMContentLoaded', function () {
             }, 4000);
         }
 
+        //Валидация - только цифры в телефоне, только кириллица и пробелы в имени
         if ((userName) && !(userName.value.match(/[а-яёА-ЯЁ\s]/g)))  {
             statusMessage.textContent = inputErrorMessage;
             return;
@@ -347,6 +352,7 @@ window.addEventListener('DOMContentLoaded', function () {
                 
         statusMessage.textContent = loadMessage;
         
+        //Получение объекта с данными калькулятора из LocalStorage, добавление в объект данных формы
         const formData = new FormData(form);
         let thisBody = {},
         mainBody = JSON.parse(localStorage.getItem("calcData"));
@@ -364,6 +370,7 @@ window.addEventListener('DOMContentLoaded', function () {
         body = mainBody;   
         userQuestion[0].value = '';
 
+        //Отправка данных
         const outputData = (response) => {
             if (response.status != 200) {
                 throw new Error('network status is not 200');

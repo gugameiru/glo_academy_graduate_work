@@ -27,7 +27,9 @@ window.addEventListener('DOMContentLoaded', function () {
             }
 
             //Вызов отправки данных
-            if ((target.type == 'submit') && (target.name == 'submit') && (target.tagName == 'BUTTON') && (target.className.indexOf('director-btn') == -1)) { 
+            if ((target.type == 'submit') && (target.tagName == 'BUTTON') && !((target.className.indexOf('call-btn') != -1) || (target.className.indexOf('check-btn') != -1)|| (target.className.indexOf('discount-btn') != -1)||
+            (target.className.indexOf('consultation-btn') != -1) ||
+            target.classList.contains('popup-close'))) {
                 console.log(target.type);
                 target = target.closest('form');
                 sendForm(target);
@@ -109,7 +111,7 @@ window.addEventListener('DOMContentLoaded', function () {
 
         target.style.display = 'none';
 
-        
+        return;
     };
 
     //Универсальный аккордеон
@@ -140,7 +142,6 @@ window.addEventListener('DOMContentLoaded', function () {
             titleTextes = accordion.querySelectorAll('.title-text'),
             allLinks = accordion.querySelectorAll('a'),
             distance = accordion.querySelectorAll('input')[2],
-            question = document.querySelector('.user_quest'),
             total = document.getElementById('calc-result');
         let totalMultiplier = {val: 1},
             bottom = {val: 0},
@@ -154,8 +155,7 @@ window.addEventListener('DOMContentLoaded', function () {
                 ringNumber2: 0,
                 bottom: true,
                 distance: 0,
-                sum: 0,
-                userQuestion: ''
+                sum: 0
             };
 
         
@@ -303,12 +303,7 @@ window.addEventListener('DOMContentLoaded', function () {
         distance.addEventListener('change', () =>{
             allSelects();
         });
-        
-        question.addEventListener('change', () => {
-            calcData.userQuestion = question.value;
-        });
         return(calcData);
-
     };
     
     calc();
@@ -382,7 +377,7 @@ window.addEventListener('DOMContentLoaded', function () {
             elem.value = '';
             
         });
-        
+        return;
     };
 
 

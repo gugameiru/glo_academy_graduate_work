@@ -153,7 +153,8 @@ window.addEventListener('DOMContentLoaded', function () {
                 ringNumber2: 0,
                 bottom: true,
                 distance: 0,
-                sum: 0
+                sum: 0,
+                userQuestion: ''
             };
 
         
@@ -312,6 +313,7 @@ window.addEventListener('DOMContentLoaded', function () {
         const errorMessage = 'Что-то пошло не так...',
             loadMessage = 'Загрузка...',
             successMessage = 'Спасибо! Ожидайте звонка нашего менеджера',
+            userQuestion = document.getElementsByName('user_quest'),
             url = './server.php';
 
         const statusMessage = document.createElement('div');
@@ -333,6 +335,7 @@ window.addEventListener('DOMContentLoaded', function () {
         });
 
         mainBody.body = thisBody;
+        mainBody.userQuestion = userQuestion[0].value;
         body = mainBody;   
 
         const outputData = (response) => {

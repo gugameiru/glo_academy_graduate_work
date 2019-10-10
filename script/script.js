@@ -120,12 +120,15 @@ window.addEventListener('DOMContentLoaded', function () {
         const thisPanel = document.getElementById(panelClass);
 
         allPanels.forEach(elem => {
+            
             if (elem.id != thisPanel) {
                 elem.classList.remove('in');
+
             }
         });
         
-        thisPanel.classList.toggle('in');
+        thisPanel.classList.add('in');
+        
         return;        
         
     };

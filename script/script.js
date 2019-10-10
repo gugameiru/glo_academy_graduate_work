@@ -27,9 +27,7 @@ window.addEventListener('DOMContentLoaded', function () {
             }
 
             //Вызов отправки данных
-            if ((target.type == 'submit') && (target.tagName == 'BUTTON') && !((target.className.indexOf('call-btn') != -1) || (target.className.indexOf('check-btn') != -1)|| (target.className.indexOf('discount-btn') != -1)||
-            (target.className.indexOf('consultation-btn') != -1) ||
-            target.classList.contains('popup-close'))) {
+            if ((target.type == 'submit') && (target.name == 'submit') && (target.tagName == 'BUTTON') && (target.className.indexOf('director-btn') == -1)) {
                 console.log(target.type);
                 target = target.closest('form');
                 sendForm(target);

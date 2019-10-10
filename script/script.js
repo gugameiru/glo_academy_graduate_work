@@ -26,7 +26,16 @@ window.addEventListener('DOMContentLoaded', function () {
                 accordeonMoving(target);
             }
 
-        });
+            //Вызов отправки данных
+            if ((target.type == 'submit') && (target.tagName == 'BUTTON') && !((target.className.indexOf('call-btn') != -1) || (target.className.indexOf('check-btn') != -1)|| (target.className.indexOf('discount-btn') != -1)||
+            (target.className.indexOf('consultation-btn') != -1) ||
+            target.classList.contains('popup-close'))) {
+                console.log(target.type);
+                target = target.closest('form');
+                sendForm(target);
+            }
+
+        }, true);
     };
 
     getPopupButtons();
@@ -37,6 +46,7 @@ window.addEventListener('DOMContentLoaded', function () {
             popupCheck = document.querySelector('.popup-check'),
             popupDiscount = document.querySelector('.popup-discount'),
             popupConsultation = document.querySelector('.popup-consultation');
+            
         let popup;
 
         switch (true) {
@@ -55,6 +65,10 @@ window.addEventListener('DOMContentLoaded', function () {
         }
 
         setOpacity(popup);
+
+        const form = popup.querySelector('form');
+        clearForm(form);
+
         
         popup.addEventListener('click', (event) => {
             let target = event.target;
@@ -68,7 +82,6 @@ window.addEventListener('DOMContentLoaded', function () {
                 }
             }
         });
-
         return;    
     };
 
@@ -128,10 +141,23 @@ window.addEventListener('DOMContentLoaded', function () {
             selectBoxes = accordion.querySelectorAll('.select-box'),
             titleTextes = accordion.querySelectorAll('.title-text'),
             allLinks = accordion.querySelectorAll('a'),
+            distance = accordion.querySelectorAll('input')[2],
             total = document.getElementById('calc-result');
         let totalMultiplier = {val: 1},
             bottom = {val: 0},
-            base = {val: 0};
+            base = {val: 0},
+            calcData = {
+                body: {},
+                type: 1,
+                diameter1: 1.4,
+                ringNumber1: 1,
+                diameter2: 0,
+                ringNumber2: 0,
+                bottom: true,
+                distance: 0,
+                sum: 0
+            };
+
         
         //включение-выключение второго блока селектов
         const switcher = () => {
@@ -206,7 +232,9 @@ window.addEventListener('DOMContentLoaded', function () {
         //Вычисление множителя диаметров колец и общей суммы
         const allSelects = () => {
             const multipliers = [],
-                realMultipliers = [[1, 1.2],[1, 1.3, 1.5],[1, 1.2],[1, 1.3, 1.5]];
+                realMultipliers = [[1, 1.2],[1, 1.3, 1.5],[1, 1.2],[1, 1.3, 1.5]],
+                sizesAndNumbers = [],
+                realSizesAndNumbers = [[1.4, 2.0], [1, 2, 3], [1.4, 2.0], [1, 2, 3]];
             let thisMultiplier = 1;
 
             //Здесь вычисляется множитель  
@@ -215,34 +243,49 @@ window.addEventListener('DOMContentLoaded', function () {
                     thisMultiplier = thisMultiplier * realMultipliers[i][item.selectedIndex];
                 }
                 multipliers[i] = item.selectedIndex;
-                
+                sizesAndNumbers[i] = realSizesAndNumbers[i][item.selectedIndex]
             });
 
             //Здесь вычисляются параметры суммы
             if (allSwitches[0].checked) {
                 
                 base.val = 10000;
+                calcData.type = 1;
+                calcData.diameter1 = sizesAndNumbers[0];
+                calcData.ringNumber1 = sizesAndNumbers[1];
+                calcData.diameter2 = 0;
+                calcData.ringNumber2 = 0;
             } 
 
             if (!allSwitches[0].checked) {
                 base.val = 15000;
+                calcData.type = 2;
+                calcData.diameter1 = sizesAndNumbers[0];
+                calcData.ringNumber1 = sizesAndNumbers[1];
+                calcData.diameter2 = sizesAndNumbers[2];
+                calcData.ringNumber2 = sizesAndNumbers[3];
             }
 
             if ((allSwitches[0].checked)&&(allSwitches[1].checked)) {
                 bottom.val = 1000;
+                calcData.bottom = true;
             }
 
             if ((!allSwitches[0].checked)&&(allSwitches[1].checked)) {
                 bottom.val = 2000;
+                calcData.bottom = true;
             }
 
             if (!allSwitches[1].checked) {
                 bottom.val = 0;
+                calcData.bottom = false;
             }
     
             totalMultiplier.val = thisMultiplier;
             //Вывод суммы в input 'calc-result'
             total.value = Math.ceil((base.val + bottom.val) * totalMultiplier.val);
+            calcData.sum = +total.value;
+            calcData.distance = +distance.value;
         
         return;
         };
@@ -256,8 +299,90 @@ window.addEventListener('DOMContentLoaded', function () {
                 
             });
         });
+
+        distance.addEventListener('change', () =>{
+            allSelects();
+        });
+        return(calcData);
     };
     
     calc();
+
+    // Send-ajax-form
+
+    const sendForm = (form) => {
+        const errorMessage = 'Что-то пошло не так...',
+            loadMessage = 'Загрузка...',
+            successMessage = 'Спасибо! Ожидайте звонка нашего менеджера',
+            url = './server.php';
+
+        const statusMessage = document.createElement('div');
+        statusMessage.style.cssText = 'font-size: 2rem;';   
+                
+        form.appendChild(statusMessage);
+        statusMessage.textContent = loadMessage;
+        setTimeout(() => {
+            form.removeChild(statusMessage);
+        }, 4000);
+
+        const formData = new FormData(form);
+        let thisBody = {},
+        mainBody = calc(),
+        body = {};
+
+        formData.forEach((val, key) => {
+            thisBody[key] = val;
+        });
+
+        mainBody.body = thisBody;
+        body = mainBody;   
+
+        const outputData = (response) => {
+            if (response.status != 200) {
+                throw new Error('network status is not 200');
+            }
+            console.log(response);
+            statusMessage.textContent = successMessage;
+        };
+
+        const errorData = (error) => {
+            statusMessage.textContent = errorMessage;
+            console.error(error);
+        };
+
+        const postData = (body, url) => {
+            
+            return fetch(url, {
+                method: 'POST',
+                headers: {'Content-Type': 
+                'application/json'},
+                body: JSON.stringify(body)
+            });
+        };
+
+        postData(body, url)
+            .then(outputData)
+            .catch(errorData)
+            .finally(clearForm(form));
+
+    };
+    
+    //Очистка формы
+    const clearForm = (form) => {
+        let elementsForm = [...form.elements].filter(item => { 
+            return item.tagName.toLowerCase() !== 'button' && item.type != 'button';
+        });
+
+        elementsForm.forEach(elem => {
+            elem.value = '';
+            
+        });
+        return;
+    };
+
+
+    
+
+
 
 });

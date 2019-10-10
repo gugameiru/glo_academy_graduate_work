@@ -28,7 +28,6 @@ window.addEventListener('DOMContentLoaded', function () {
 
             //Вызов отправки данных
             if ((target.type == 'submit') && (target.name == 'submit') && (target.tagName == 'BUTTON') && (target.className.indexOf('director-btn') == -1)) {
-                console.log(target.type);
                 target = target.closest('form');
                 sendForm(target);
             }
@@ -152,12 +151,9 @@ window.addEventListener('DOMContentLoaded', function () {
                 diameter2: 0,
                 ringNumber2: 0,
                 bottom: true,
-                distance: 0,
-                sum: 0,
-                userQuestion: ''
+                sum: 0                
             };
 
-        
         //включение-выключение второго блока селектов
         const switcher = () => {
             
@@ -284,7 +280,13 @@ window.addEventListener('DOMContentLoaded', function () {
             //Вывод суммы в input 'calc-result'
             total.value = Math.ceil((base.val + bottom.val) * totalMultiplier.val);
             calcData.sum = +total.value;
-            calcData.distance = +distance.value;
+
+            if (distance.value != '') {
+                calcData.distance = +distance.value;
+            }
+
+            localStorage.setItem("calcData", JSON.stringify(calcData));
+
         
         return;
         };
@@ -299,14 +301,16 @@ window.addEventListener('DOMContentLoaded', function () {
             });
         });
 
-        distance.addEventListener('change', () =>{
+        distance.addEventListener('change', () => {
+            calcData.distance = distance.textContent;
             allSelects();
         });
-        return(calcData);
+   
     };
-    
-    calc();
 
+    calc();
+    
+    
     // Send-ajax-form
 
     const sendForm = (form) => {
@@ -327,16 +331,20 @@ window.addEventListener('DOMContentLoaded', function () {
 
         const formData = new FormData(form);
         let thisBody = {},
-        mainBody = calc(),
-        body = {};
+        mainBody = JSON.parse(localStorage.getItem("calcData"));
+
+        let body = {};
 
         formData.forEach((val, key) => {
             thisBody[key] = val;
         });
 
         mainBody.body = thisBody;
-        mainBody.userQuestion = userQuestion[0].value;
+        if (userQuestion[0].value != '') {
+            mainBody.userQuestion = userQuestion[0].value;
+        }
         body = mainBody;   
+        userQuestion[0].value = '';
 
         const outputData = (response) => {
             if (response.status != 200) {

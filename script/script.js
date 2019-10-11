@@ -66,6 +66,30 @@ window.addEventListener('DOMContentLoaded', function () {
         const form = popup.querySelector('form');
         clearForm(form);
 
+        //Валидация - только цифры в телефоне, только кириллица и пробелы в имени
+        const userName = form.querySelector('input[name="user_name"]'),
+        userPhone = form.querySelector('input[name="user_phone"]');
+
+        if (userName) {
+            userName.addEventListener('change', () => {
+                if (!(userName.value.match(/[а-яёА-ЯЁ\s]/g))) {
+                    userName.value = '';
+                    userName.placeholder = 'Ошибка ввода';
+                }
+            });
+        }
+        
+
+        if (userPhone) {
+            userName.addEventListener('change', () => {
+            if (!(userPhone.value.match(/[0-9]/g))) {
+                userPhone.value = '';
+                userName.placeholder = 'Ошибка ввода';
+                }
+            });
+        }
+            
+
         
         popup.addEventListener('click', (event) => {
             let target = event.target;
@@ -342,17 +366,6 @@ window.addEventListener('DOMContentLoaded', function () {
                 form.removeChild(statusMessage);
             }, 4000);
         }
-
-        //Валидация - только цифры в телефоне, только кириллица и пробелы в имени
-        if ((userName) && !(userName.value.match(/[а-яёА-ЯЁ\s]/g)))  {
-            statusMessage.textContent = inputErrorMessage;
-            return;
-        }
-
-        if ((userPhone)&& !(userPhone.value.match(/[0-9]/g))) {
-            statusMessage.textContent = inputErrorMessage;
-            return;
-        }      
         
         //Получение объекта с данными калькулятора из LocalStorage, добавление в объект данных формы
         const formData = new FormData(form);

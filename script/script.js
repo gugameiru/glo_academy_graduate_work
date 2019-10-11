@@ -64,9 +64,9 @@ window.addEventListener('DOMContentLoaded', function () {
         setOpacity(popup);
 
         const form = popup.querySelector('form'),
-            subminButton = form.querySelector('button.capture-form-btn');
+            submitButton = form.querySelector('button.capture-form-btn');
         clearForm(form);
-        subminButton.disabled = true;
+        submitButton.disabled = true;
 
         //Валидация - только цифры в телефоне, только кириллица и пробелы в имени
         const userName = form.querySelector('input[name="user_name"]'),
@@ -77,9 +77,9 @@ window.addEventListener('DOMContentLoaded', function () {
                 if (!(userName.value.match(/[а-яёА-ЯЁ\s]/g))) {
                     userName.value = '';
                     userName.placeholder = 'Ошибка ввода';
-                    subminButton.disabled = true;
+                    submitButton.disabled = true;
                 } else {
-                    subminButton.disabled = false;
+                    submitButton.disabled = false;
                 }
             });
         }
@@ -90,9 +90,9 @@ window.addEventListener('DOMContentLoaded', function () {
             if (!(userPhone.value.match(/[0-9]/g))) {
                 userPhone.value = '';
                 userPhone.placeholder = 'Ошибка ввода';
-                subminButton.disabled = true;
+                submitButton.disabled = true;
                 } else {
-                    subminButton.disabled = false;
+                    submitButton.disabled = false;
                 }
             });
         }
@@ -175,7 +175,8 @@ window.addEventListener('DOMContentLoaded', function () {
             allLinks = accordion.querySelectorAll('a'),
             distance = accordion.querySelectorAll('input')[2],
             total = document.getElementById('calc-result'),
-            submitButton = accordion.querySelector('button');
+            submitParentDiv = document.getElementById('collapseFour'),
+            submitButton = submitParentDiv.querySelector('button.construct-btn');
         let totalMultiplier = {val: 1},
             bottom = {val: 0},
             base = {val: 0},
@@ -345,7 +346,12 @@ window.addEventListener('DOMContentLoaded', function () {
 
         //Добавление расстояния до дома
         distance.addEventListener('change', () => {
-            calcData.distance = distance.textContent;
+            if (distance.value != '') {
+                calcData.distance = distance.value;
+                submitButton.disabled = false;
+            } else {
+                submitButton.disabled = true;
+            }
             allSelects();
         });
    

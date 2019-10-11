@@ -63,8 +63,10 @@ window.addEventListener('DOMContentLoaded', function () {
 
         setOpacity(popup);
 
-        const form = popup.querySelector('form');
+        const form = popup.querySelector('form'),
+            subminButton = form.querySelector('button.capture-form-btn');
         clearForm(form);
+        subminButton.disabled = true;
 
         //Валидация - только цифры в телефоне, только кириллица и пробелы в имени
         const userName = form.querySelector('input[name="user_name"]'),
@@ -75,16 +77,22 @@ window.addEventListener('DOMContentLoaded', function () {
                 if (!(userName.value.match(/[а-яёА-ЯЁ\s]/g))) {
                     userName.value = '';
                     userName.placeholder = 'Ошибка ввода';
+                    subminButton.disabled = true;
+                } else {
+                    subminButton.disabled = false;
                 }
             });
         }
         
 
         if (userPhone) {
-            userName.addEventListener('change', () => {
+            userPhone.addEventListener('change', () => {
             if (!(userPhone.value.match(/[0-9]/g))) {
                 userPhone.value = '';
-                userName.placeholder = 'Ошибка ввода';
+                userPhone.placeholder = 'Ошибка ввода';
+                subminButton.disabled = true;
+                } else {
+                    subminButton.disabled = false;
                 }
             });
         }

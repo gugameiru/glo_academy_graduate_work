@@ -324,6 +324,7 @@ window.addEventListener('DOMContentLoaded', function () {
             loadMessage = 'Загрузка...',
             successMessage = 'Спасибо! Ожидайте звонка нашего менеджера',
             inputErrorMessage = 'Ошибка ввода',
+            inputDistanceMessage = 'Введите расстояние до дома',
             userQuestion = document.getElementsByName('user_quest'),
             userName = form.querySelector('input[name="user_name"]'),
             userPhone = form.querySelector('input[name="user_phone"]'),
@@ -351,14 +352,17 @@ window.addEventListener('DOMContentLoaded', function () {
         if ((userPhone)&& !(userPhone.value.match(/[0-9]/g))) {
             statusMessage.textContent = inputErrorMessage;
             return;
-        }
-                
-        statusMessage.textContent = loadMessage;
+        }      
         
         //Получение объекта с данными калькулятора из LocalStorage, добавление в объект данных формы
         const formData = new FormData(form);
         let thisBody = {},
         mainBody = JSON.parse(localStorage.getItem("calcData"));
+
+        if (!mainBody.distance) {
+            statusMessage.textContent = inputDistanceMessage;
+            return;
+        }
 
         let body = {};
 
@@ -372,6 +376,8 @@ window.addEventListener('DOMContentLoaded', function () {
         }
         body = mainBody;   
         userQuestion[0].value = '';
+
+        statusMessage.textContent = loadMessage;
 
         //Отправка данных
         const outputData = (response) => {

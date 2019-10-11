@@ -166,7 +166,8 @@ window.addEventListener('DOMContentLoaded', function () {
             titleTextes = accordion.querySelectorAll('.title-text'),
             allLinks = accordion.querySelectorAll('a'),
             distance = accordion.querySelectorAll('input')[2],
-            total = document.getElementById('calc-result');
+            total = document.getElementById('calc-result'),
+            submitButton = accordion.querySelector('button');
         let totalMultiplier = {val: 1},
             bottom = {val: 0},
             base = {val: 0},
@@ -180,6 +181,9 @@ window.addEventListener('DOMContentLoaded', function () {
                 bottom: true,
                 sum: 0                
             };
+
+            submitButton.disabled = true;
+            distance.placeholder = 'Введите расстояние';
 
         //включение-выключение второго блока селектов
         const switcher = () => {
@@ -311,6 +315,7 @@ window.addEventListener('DOMContentLoaded', function () {
 
             if (distance.value != '') {
                 calcData.distance = +distance.value;
+                submitButton.disabled = false;
             }
 
             //Хранение объекта с данными калькулятора в LocalStorage
@@ -348,7 +353,6 @@ window.addEventListener('DOMContentLoaded', function () {
             loadMessage = 'Загрузка...',
             successMessage = 'Спасибо! Ожидайте звонка нашего менеджера',
             inputErrorMessage = 'Ошибка ввода',
-            inputDistanceMessage = 'Введите расстояние до дома',
             userQuestion = document.getElementsByName('user_quest'),
             userName = form.querySelector('input[name="user_name"]'),
             userPhone = form.querySelector('input[name="user_phone"]'),
@@ -372,10 +376,6 @@ window.addEventListener('DOMContentLoaded', function () {
         let thisBody = {},
         mainBody = JSON.parse(localStorage.getItem("calcData"));
 
-        if (!mainBody.distance) {
-            statusMessage.textContent = inputDistanceMessage;
-            return;
-        }
 
         let body = {};
 

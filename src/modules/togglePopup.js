@@ -1,4 +1,5 @@
 import clearForm from './clearForm.js';
+import setOpacity from './setOpacity.js';
 
 const togglePopup = (target) => {
     const popupCall = document.querySelector('.popup-call'),
@@ -23,9 +24,11 @@ const togglePopup = (target) => {
             break;
     }
 
-
     const form = popup.querySelector('form');
+
     clearForm(form);
+
+    setOpacity(popup);
             
     popup.addEventListener('click', (event) => {
         let target = event.target;

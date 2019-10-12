@@ -61,6 +61,35 @@ window.addEventListener('DOMContentLoaded', function () {
                 break;
         }
 
+        // Анимация - плавное изменение прозрачности
+        const setOpacity = (elem) => {
+            let opacity = 0;
+            elem.style.display = 'block';
+            elem.style.opacity = opacity;
+            setTimeout(function change() {
+                if (opacity > 1) {
+                    elem.style.opacity = 1;
+                    return;
+                }
+                elem.style.opacity = opacity;
+                opacity += 0.01;
+                setTimeout(change, 0.1);
+            }, 60);
+        };
+
+        //Очистка формы
+            const clearForm = (form) => {
+                let elementsForm = [...form.elements].filter(item => { 
+                    return item.tagName.toLowerCase() !== 'button' && item.type != 'button';
+                });
+
+                elementsForm.forEach(elem => {
+                    elem.value = '';
+                    
+                });
+                return;
+            };
+
         setOpacity(popup);
 
         const form = popup.querySelector('form');
@@ -81,21 +110,7 @@ window.addEventListener('DOMContentLoaded', function () {
         return;    
     };
 
-    // Анимация - плавное изменение прозрачности
-    const setOpacity = (elem) => {
-        let opacity = 0;
-        elem.style.display = 'block';
-        elem.style.opacity = opacity;
-        setTimeout(function change() {
-            if (opacity > 1) {
-                elem.style.opacity = 1;
-                return;
-            }
-            elem.style.opacity = opacity;
-            opacity += 0.01;
-            setTimeout(change, 0.1);
-        }, 60);
-    };
+    
 
     // Добавление блоков по кнопке "Больше"
     const addSentense = (target) => {
@@ -245,7 +260,7 @@ window.addEventListener('DOMContentLoaded', function () {
                     thisMultiplier = thisMultiplier * realMultipliers[i][item.selectedIndex];
                 }
                 multipliers[i] = item.selectedIndex;
-                sizesAndNumbers[i] = realSizesAndNumbers[i][item.selectedIndex]
+                sizesAndNumbers[i] = realSizesAndNumbers[i][item.selectedIndex];
             });
 
             //Здесь вычисляются параметры суммы

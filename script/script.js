@@ -26,13 +26,13 @@ window.addEventListener('DOMContentLoaded', function () {
                 accordeonMoving(target);
             }
 
-            //Вызов отправки данных
+            // Вызов отправки данных
             if ((target.type == 'submit') && (target.name == 'submit') && (target.tagName == 'BUTTON') && (target.className.indexOf('director-btn') == -1)) {
                 target = target.closest('form');
-                sendForm(target);  
+                sendForm(target);    
             }
 
-        }, true);
+        });
     };
 
     getPopupButtons();
@@ -63,42 +63,9 @@ window.addEventListener('DOMContentLoaded', function () {
 
         setOpacity(popup);
 
-        const form = popup.querySelector('form'),
-            submitButton = form.querySelector('button.capture-form-btn');
+        const form = popup.querySelector('form');
         clearForm(form);
-        submitButton.disabled = true;
-
-        //Валидация - только цифры в телефоне, только кириллица и пробелы в имени
-        const userName = form.querySelector('input[name="user_name"]'),
-        userPhone = form.querySelector('input[name="user_phone"]');
-
-        if (userName) {
-            userName.addEventListener('change', () => {
-                if (!(userName.value.match(/[а-яёА-ЯЁ\s]/g))) {
-                    userName.value = '';
-                    userName.placeholder = 'Ошибка ввода';
-                    submitButton.disabled = true;
-                } else {
-                    submitButton.disabled = false;
-                }
-            });
-        }
-        
-
-        if (userPhone) {
-            userPhone.addEventListener('change', () => {
-            if (!(userPhone.value.match(/[0-9]/g))) {
-                userPhone.value = '';
-                userPhone.placeholder = 'Ошибка ввода';
-                submitButton.disabled = true;
-                } else {
-                    submitButton.disabled = false;
-                }
-            });
-        }
-            
-
-        
+                
         popup.addEventListener('click', (event) => {
             let target = event.target;
 
@@ -345,7 +312,7 @@ window.addEventListener('DOMContentLoaded', function () {
         });
 
         //Добавление расстояния до дома
-        distance.addEventListener('change', () => {
+        distance.addEventListener('input', () => {
             if (distance.value != '') {
                 calcData.distance = distance.value;
                 submitButton.disabled = false;
@@ -365,25 +332,44 @@ window.addEventListener('DOMContentLoaded', function () {
     const sendForm = (form) => {
         const errorMessage = 'Что-то пошло не так...',
             loadMessage = 'Загрузка...',
-            successMessage = 'Спасибо! Ожидайте звонка нашего менеджера',
             inputErrorMessage = 'Ошибка ввода',
-            userQuestion = document.getElementsByName('user_quest'),
             userName = form.querySelector('input[name="user_name"]'),
             userPhone = form.querySelector('input[name="user_phone"]'),
+            successMessage = 'Спасибо! Ожидайте звонка нашего менеджера',
+            userQuestion = document.getElementsByName('user_quest'),
             url = './server.php';
 
         const statusMessage = document.createElement('div');
         statusMessage.className = 'status';
-        statusMessage.style.cssText = 'font-size: 2rem;';   
+        statusMessage.style.cssText = 'font-size: 2rem;';  
+        
+        
          
         //Создание ТОЛЬКО ОДНОГО поля со статусом
         if (!form.querySelector('.status')) {
             form.appendChild(statusMessage);
-            statusMessage.textContent = loadMessage;
+            // statusMessage.textContent = loadMessage;
             setTimeout(() => {
                 form.removeChild(statusMessage);
             }, 4000);
         }
+
+        //Валидация ввода имени и номера телефона
+        if (userName) {
+            if (!(userName.value.match(/[а-яёА-ЯЁ\s]/g))){
+                statusMessage.textContent = inputErrorMessage;
+                return;
+            }
+        }
+
+        if (userPhone) {
+            if (!(userPhone.value.match(/[0-9]/g))) {
+                statusMessage.textContent = inputErrorMessage;
+                return;
+            }
+        }
+
+        statusMessage.textContent = loadMessage;
         
         //Получение объекта с данными калькулятора из LocalStorage, добавление в объект данных формы
         const formData = new FormData(form);
